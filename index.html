@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邪念日历 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 20%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 11px),
+                repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 11px);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 4em;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff00cc, #3333ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 0, 204, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 30px rgba(255, 0, 204, 0.3); }
+            to { text-shadow: 0 0 50px rgba(51, 51, 255, 0.5); }
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .yin-yang {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            position: relative;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .yin-yang::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(to right, #fff 0%, #fff 50%, #000 50%, #000 100%);
+            position: relative;
+        }
+
+        .yin-yang::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            border-radius: 50%;
+            top: 0;
+            left: 25%;
+            background: radial-gradient(circle, #fff 25%, #000 25%, #000 75%, #fff 75%);
+        }
+
+        .progress-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-section:hover {
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .progress-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ff00cc;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 0, 204, 0.5);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(25px, 1fr));
+            gap: 5px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .day-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .day-dot.passed {
+            background: rgba(255, 0, 102, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 102, 0.3);
+        }
+
+        .day-dot.remaining {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .day-dot:hover {
+            transform: scale(1.5);
+            border-color: #ff00cc;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(255, 0, 204, 0.6);
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            max-width: 300px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid rgba(255, 0, 204, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid rgba(0, 0, 0, 0.95);
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .legend-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .legend-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.passed {
+            background: rgba(255, 0, 102, 0.6);
+            box-shadow: 0 0 10px rgba(255, 0, 102, 0.3);
+        }
+
+        .legend-dot.remaining {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            opacity: 0.6;
+            font-size: 0.9em;
+            line-height: 1.6;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5em;
+            }
+            
+            .subtitle {
+                font-size: 1.2em;
+            }
+            
+            .progress-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+                gap: 3px;
+            }
+            
+            .day-dot {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">2026 ANNUAL BADASS</h1>
+            <p class="subtitle">阴阳相生</p>
+            <div class="yin-yang"></div>
+        </div>
+
+        <div class="progress-section">
+            <h2 class="progress-title">2026年度进度报告</h2>
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="daysPassed">0</div>
+                    <div class="stat-label">已逝天数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="daysRemaining">0</div>
+                    <div class="stat-label">残存天数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="progressPercent">0%</div>
+                    <div class="stat-label">生命流逝</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot passed"></div>
+                <span>已然消逝的昨日</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot remaining"></div>
+                <span>尚未到来的折磨</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>直视它，拥抱它，处理它。</p>
+            <p>崽种。</p>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // 暗黑哲理语录库
+        const darkQuotes = [
+            "时间不会治愈一切，它只是教会你如何带着痛苦生存。",
+            "所谓的成长，就是学会在绝望中寻找更小的绝望。",
+            "每天都是一场缓慢而痛苦的死亡，我们称之为生活。",
+            "希望是最残忍的刑罚，它让你在绝望中仍抱有幻想。",
+            "你不是在变老，你是在慢慢变成一具行尸走肉。",
+            "快乐只是痛苦之间的短暂停顿，别对它上瘾。",
+            "所谓的明天，只是另一个今天的复制品。",
+            "我们都在等待一个永远不会到来的救赎。",
+            "生活就像一场慢性自杀，只是过程比较漫长。",
+            "你以为你在掌控人生？不过是被命运玩弄的跳梁小丑。",
+            "每一秒的流逝，都是你在向死亡迈出的一小步。",
+            "别做梦了，你永远不会成为你想成为的那个人。",
+            "所谓的坚持，不过是在错误的道路上越走越远。",
+            "生活就是一个巨大的骗局，而你我都是自愿上当的傻子。",
+            "你以为的重新开始，不过是另一次失败的铺垫。",
+            "时间是最残忍的刽子手，它一寸寸地割着你的生命。",
+            "我们都在表演一场没有观众的独角戏。",
+            "所谓的幸福，不过是痛苦暂时打盹而已。",
+            "你不是在活着，只是在延缓死亡的到来。",
+            "每一天都是对昨日自己的背叛，对明日自己的辜负。",
+            "生活就像一场慢性中毒，毒性每天都在积累。",
+            "你以为的独一无二，不过是芸芸众生中的又一个复制品。",
+            "所谓的梦想，就是让你在清醒时也能做梦的幻觉。",
+            "我们都在等待一个永远不会到来的奇迹。",
+            "生活就是一个巨大的牢笼，而钥匙早已丢失。",
+            "你以为的坚强，不过是在崩溃边缘的苦苦支撑。",
+            "每一天都是对生命的透支，而你却浑然不觉。",
+            "所谓的快乐，不过是痛苦暂时换了张面具。",
+            "你不是在成长，只是在慢慢腐烂。",
+            "生活就像一场慢性自杀，而你却称之为人生。"
+        ];
+
+        // 计算年度进度
+        function calculateProgress() {
+            const now = new Date();
+            const start = new Date(2026, 0, 1); // 2026年1月1日
+            const end = new Date(2026, 11, 31); // 2026年12月31日
+            
+            const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+            const daysRemaining = totalDays - daysPassed;
+            const progressPercent = Math.round((daysPassed / totalDays) * 100);
+
+            document.getElementById('daysPassed').textContent = Math.max(0, daysPassed);
+            document.getElementById('daysRemaining').textContent = Math.max(0, daysRemaining);
+            document.getElementById('progressPercent').textContent = Math.max(0, Math.min(100, progressPercent)) + '%';
+        }
+
+        // 生成日历网格
+        function generateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const now = new Date();
+            const start = new Date(2026, 0, 1);
+            const end = new Date(2026, 11, 31);
+            
+            const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+
+            for (let i = 0; i < totalDays; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'day-dot';
+                
+                const currentDate = new Date(2026, 0, i + 1);
+                if (i <= daysPassed) {
+                    dot.classList.add('passed');
+                } else {
+                    dot.classList.add('remaining');
+                }
+
+                // 添加悬停事件
+                dot.addEventListener('mouseenter', (e) => showTooltip(e, currentDate, i));
+                dot.addEventListener('mouseleave', hideTooltip);
+
+                grid.appendChild(dot);
+            }
+        }
+
+        // 显示提示框
+        function showTooltip(event, date, dayIndex) {
+            const tooltip = document.getElementById('tooltip');
+            const dateStr = `${date.getMonth() + 1}月${date.getDate()}日`;
+            const quote = darkQuotes[dayIndex % darkQuotes.length];
+            
+            tooltip.innerHTML = `
+                <strong>${dateStr}</strong><br><br>
+                "${quote}"
+            `;
+            
+            tooltip.style.left = event.clientX + 'px';
+            tooltip.style.top = (event.clientY + 20) + 'px';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.classList.add('show');
+        }
+
+        // 隐藏提示框
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        // 初始化
+        function init() {
+            calculateProgress();
+            generateCalendar();
+            
+            // 每分钟更新一次进度
+            setInterval(calculateProgress, 60000);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
